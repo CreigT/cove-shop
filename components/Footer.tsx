@@ -5,8 +5,8 @@ export function Footer() {
   return (
     <footer className="wrap">
       <div className="footer">
-        <span>
-          {store.name} · owner {store.owner}
+        <span className="footer-brand">
+          {store.name} · {SPONSOR}
         </span>
         <div className="footer-links">
           <Link href="/help">Help</Link>
@@ -16,7 +16,6 @@ export function Footer() {
           <a href={`mailto:${store.support}`}>{store.support}</a>
         </div>
       </div>
-      <p className="sponsor">{SPONSOR}</p>
     </footer>
   );
 }

@@ -11,7 +11,7 @@ export const store = {
       ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
       : "http://localhost:3000"),
   support: process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "support@example.com",
-  owner: process.env.NEXT_PUBLIC_OWNER_NAME || "Owner",
+  owner: process.env.NEXT_PUBLIC_OWNER_NAME || "CREIGNIFICENT LLC",
   secret: process.env.STORE_SECRET || "dev-only-change-me",
 };
 
