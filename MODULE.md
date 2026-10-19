@@ -11,8 +11,10 @@ A store that cannot answer “where is my file?” or “I want my $9 back” wi
 
 ## 4. Agent Responsibilities
 - Sales Agent: start checkout at printed prices
-- Customer Support Agent: log tickets, point to the library
-- Refund Agent: record requests, never execute Stripe refunds
+- Fulfillment Agent: record paid orders from the Stripe webhook, email a signed download link
+- Customer Support Agent: answer tickets by rule, rewritten by AI when a key is set
+- Refund Agent: refund orders at or under REFUND_AUTO_CAP through Stripe, hold the rest for the owner
+- Pricing, Product, Marketing agents and the Revenue Report: daily crons inside price, catalog, and AI-spend guardrails
 - Reputation Agent: accept short public reviews
 - CRM Agent: bind email to a signed cookie
 - Ethics Agent: block dark patterns and silent charges
@@ -25,19 +27,19 @@ Buyer email, product slug, ticket text, refund reason, review text, Stripe sessi
 Checkout URL, signed access cookie, library HTML, ticket event, refund-pending event, review list, health JSON.
 
 ## 7. APIs Required
-`/api/checkout` `/api/claim` `/api/webhook` `/api/access` `/api/health` `/api/ticket` `/api/refund` `/api/review`
+`/api/checkout` `/api/claim` `/api/webhook` `/api/download` `/api/access` `/api/health` `/api/ticket` `/api/refund` `/api/review` `/api/cron/[agent]` `/api/admin/status`
 
 ## 8. MCP Tools Required
 None in production path. Optional later: GitHub deploy status, email send.
 
 ## 9. Databases Required
-None required to launch. In-memory event + review lists on the function instance. Replace with Postgres when traffic is real.
+Upstash Redis or Vercel KV over REST (`KV_REST_API_*` or `UPSTASH_REDIS_REST_*`) for orders, tickets, events, agent runs, catalog changes, and counters. In-memory fallback for demo. Reviews stay in memory.
 
 ## 10. Memory Requirements
 HMAC access token in an httpOnly cookie. Short event log for the agent page.
 
 ## 11. Security Controls
-Zero-trust cookies, HMAC signatures, webhook signature check, no secret keys in the browser, demo mode default, refunds cannot call Stripe.
+Zero-trust cookies, HMAC signatures, webhook signature check, no secret keys in the browser, demo mode default, refunds call Stripe only at or under the cap with an idempotency key, cron routes need CRON_SECRET, owner desk needs ADMIN_TOKEN, KILL_SWITCH halts agents and AI.
 
 ## 12. Failure Recovery Strategy
 Checkout errors return JSON. Demo path works with empty Stripe keys. Health endpoint for Vercel probes. Owner can freeze live mode by setting `NEXT_PUBLIC_DEMO_MODE=true`.
@@ -58,8 +60,8 @@ Env config → product catalog → checkout session → entitlement cookie → l
 ## 16. Decision Logic
 If Stripe key missing or demo flag true → demo unlock.
 If live → Stripe Checkout.
-If refund posted → log only.
-If ticket posted → log only.
+If refund posted → match order ID and email, refund at or under the cap inside the window, otherwise hold for the owner.
+If ticket posted → classify by rule, answer, and route refunds with an order ID to the refund agent.
 If review posted → append public list.
 
 ## 17. Escalation Rules
@@ -75,7 +77,7 @@ Every checkout start, claim, ticket, refund request, review, and Stripe event ty
 Event log fields: id, time, kind, detail. Cookie payload stores email + slugs + expiry.
 
 ## 21. Compliance Requirements
-Printed prices. No dark patterns. 14-day refund *request* window. Owner approval for money movement. Privacy note on /legal. Stripe handles cards.
+Printed prices. No dark patterns. 14-day refund window. Automatic refunds only at or under REFUND_AUTO_CAP. Larger money movement needs the owner. Privacy note on /legal. Stripe handles cards.
 
 ## 22. Future Expansion Ideas
 Postgres tickets, Resend mail, owner approval token for refunds, loyalty stamps, help-center search.
