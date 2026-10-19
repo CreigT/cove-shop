@@ -1,9 +1,12 @@
 import Link from "next/link";
-import { shopProducts } from "@/lib/products";
+import { getCatalog, shopProducts } from "@/lib/products";
 import { ProductCard } from "@/components/ProductCard";
 import { store } from "@/lib/config";
 
-export default function HomePage() {
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const catalog = await getCatalog();
   return (
     <div className="wrap">
       <section className="hero">
@@ -39,16 +42,16 @@ export default function HomePage() {
           <article className="card">
             <div className="badge">3</div>
             <h3>Open the library</h3>
-            <p className="muted">Access stays on this browser. Help and refunds are one tap away.</p>
+            <p className="muted">The download link lands in your inbox. Help and refunds are one tap away.</p>
           </article>
         </div>
       </section>
 
       <section className="section">
         <h2>On the shelf</h2>
-        <p className="muted">Reasonable paywalls. Nothing over $29 unless you choose the monthly pass.</p>
+        <p className="muted">Reasonable paywalls. Agents add new packs and tune prices inside a fixed band.</p>
         <div className="grid" style={{ marginTop: 18 }}>
-          {shopProducts().map((product) => (
+          {shopProducts(catalog).map((product) => (
             <ProductCard key={product.slug} product={product} />
           ))}
         </div>

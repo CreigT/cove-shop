@@ -1,7 +1,6 @@
-export const libraryItems: Record<
-  string,
-  { title: string; body: string }[]
-> = {
+export type LibraryItem = { title: string; body: string };
+
+export const libraryItems: Record<string, LibraryItem[]> = {
   "starter-pack": [
     {
       title: "20 prompts",

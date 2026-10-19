@@ -1,6 +1,8 @@
-import { store } from "@/lib/config";
+import { guardrails, store } from "@/lib/config";
+import { dollars } from "@/lib/products";
 
 export default function LegalPage() {
+  const g = guardrails();
   return (
     <div className="wrap section">
       <h1>Legal</h1>
@@ -9,19 +11,20 @@ export default function LegalPage() {
       </p>
       <article className="card">
         <h3>What you buy</h3>
-        <p>Digital files and written kits delivered in the library on this site.</p>
+        <p>Digital files and written kits delivered by email link and in the library on this site. Some products are written by the store’s AI agents.</p>
       </article>
       <article className="card" style={{ marginTop: 12 }}>
         <h3>Refunds</h3>
         <p>
-          Ask within 14 days. Requests are logged. Refunds of live charges need
-          owner approval. Agents cannot send money on their own.
+          Ask within {g.refundWindowDays} days with your order ID. Orders up to{" "}
+          {dollars(g.refundAutoCapCents)} are refunded automatically to the original
+          card. Larger or late requests wait for owner review.
         </p>
       </article>
       <article className="card" style={{ marginTop: 12 }}>
         <h3>Data</h3>
         <p>
-          We store the email you type, a signed access cookie, and help notes.
+          We store the email you type, your order record, a signed access cookie, and help notes. Help notes may be answered by an AI model.
           We do not sell lists.
         </p>
       </article>

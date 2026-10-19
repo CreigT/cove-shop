@@ -1,18 +1,17 @@
 import { NextResponse } from "next/server";
-import { logEvent } from "@/lib/events";
+import { requestRefund } from "@/lib/refunds";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
-  const { email, slug, reason } = (await request.json()) as {
+  const { email, orderId, reason } = (await request.json().catch(() => ({}))) as {
     email?: string;
-    slug?: string;
+    orderId?: string;
     reason?: string;
   };
-  if (!email || !reason) {
-    return NextResponse.json({ error: "Email and reason are required." }, { status: 400 });
+  if (!email || !orderId || !reason) {
+    return NextResponse.json({ error: "Email, order ID, and reason are required." }, { status: 400 });
   }
-  logEvent(
-    "refund-request",
-    `${email} asked to refund ${slug || "unknown"} — pending owner`
-  );
-  return NextResponse.json({ ok: true, moneyMoved: false });
+  const outcome = await requestRefund({ email: email.trim(), orderId: orderId.trim(), reason: reason.slice(0, 1000) });
+  return NextResponse.json({ ok: outcome.kind !== "rejected", outcome });
 }

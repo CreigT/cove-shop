@@ -3,8 +3,10 @@ import { getProduct, formatPrice } from "@/lib/products";
 import { CheckoutForm } from "@/components/CheckoutForm";
 import { isDemoMode } from "@/lib/config";
 
-export default function ProductPage({ params }: { params: { slug: string } }) {
-  const product = getProduct(params.slug);
+export const dynamic = "force-dynamic";
+
+export default async function ProductPage({ params }: { params: { slug: string } }) {
+  const product = await getProduct(params.slug);
   if (!product) notFound();
 
   return (
