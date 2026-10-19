@@ -1,1 +1,9 @@
-{ "framework": "nextjs" }
+{
+  "framework": "nextjs",
+  "crons": [
+    { "path": "/api/cron/pricing", "schedule": "0 13 * * *" },
+    { "path": "/api/cron/product", "schedule": "0 14 * * *" },
+    { "path": "/api/cron/marketing", "schedule": "0 15 * * *" },
+    { "path": "/api/cron/report", "schedule": "0 16 * * *" }
+  ]
+}

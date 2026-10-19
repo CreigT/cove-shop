@@ -1,3 +1,5 @@
+import { getKv } from "./kv";
+
 export type StoreEvent = {
   id: string;
   at: string;
@@ -5,26 +7,22 @@ export type StoreEvent = {
   detail: string;
 };
 
-const events: StoreEvent[] = [
-  {
-    id: "boot",
-    at: new Date().toISOString(),
-    kind: "system",
-    detail: "Cove agents online. Demo mode until Stripe keys exist.",
-  },
-];
-
-export function logEvent(kind: string, detail: string) {
-  events.unshift({
-    id: `${Date.now()}`,
+export async function logEvent(kind: string, detail: string) {
+  const event: StoreEvent = {
+    id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     at: new Date().toISOString(),
     kind,
     detail,
-  });
-  if (events.length > 50) events.pop();
-  return events[0];
+  };
+  console.log(JSON.stringify({ layer: "cove", ...event }));
+  try {
+    await getKv().push("events", event, 200);
+  } catch (error) {
+    console.error("event log failed", error);
+  }
+  return event;
 }
 
-export function listEvents() {
-  return events;
+export async function listEvents(count = 30) {
+  return getKv().range<StoreEvent>("events", count);
 }

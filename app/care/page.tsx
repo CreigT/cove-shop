@@ -2,8 +2,10 @@ import { getProduct, formatPrice } from "@/lib/products";
 import { CheckoutForm } from "@/components/CheckoutForm";
 import { isDemoMode } from "@/lib/config";
 
-export default function CarePage() {
-  const product = getProduct("care-pass")!;
+export const dynamic = "force-dynamic";
+
+export default async function CarePage() {
+  const product = (await getProduct("care-pass"))!;
 
   return (
     <div className="wrap section">

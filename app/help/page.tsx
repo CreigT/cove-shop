@@ -16,26 +16,27 @@ export default function HelpPage() {
         email: form.get("email"),
         topic: form.get("topic"),
         message: form.get("message"),
+        orderId: form.get("orderId"),
       }),
     });
     const data = await res.json();
-    setStatus(data.ok ? "Got it. An agent logged the note." : data.error || "Try again.");
+    setStatus(data.ok ? data.reply : data.error || "Try again.");
   }
 
   return (
     <div className="wrap section">
       <h1>Help</h1>
       <p className="lede">
-        Short answers first. If you still need a person, leave a note. Agents do not call you.
+        Short answers first. If you still need help, leave a note. The support agent answers right here and by email.
       </p>
       <div className="grid">
         <article className="card">
           <h3>Where is my pack?</h3>
-          <p className="muted">Open the library on the same browser you used to pay. Demo purchases unlock at once.</p>
+          <p className="muted">Use the link in your receipt email, or open the library on the browser you paid from.</p>
         </article>
         <article className="card">
           <h3>How do refunds work?</h3>
-          <p className="muted">Ask on the refund page. Money does not move until the owner approves.</p>
+          <p className="muted">Small orders are refunded automatically with your order ID. Larger ones go to the owner.</p>
         </article>
         <article className="card">
           <h3>Want a faster reply?</h3>
@@ -56,8 +57,10 @@ export default function HelpPage() {
         <select name="topic" defaultValue="delivery">
           <option value="delivery">I cannot open my pack</option>
           <option value="billing">A charge looks wrong</option>
+          <option value="refund">I want a refund</option>
           <option value="other">Something else</option>
         </select>
+        <input name="orderId" placeholder="Order ID from your receipt (optional)" />
         <textarea name="message" required rows={5} placeholder="What happened?" />
         <button className="btn" type="submit">
           Send note

@@ -1,7 +1,10 @@
 import Link from "next/link";
-import { products, formatPrice } from "@/lib/products";
+import { getCatalog, formatPrice } from "@/lib/products";
 
-export default function PricingPage() {
+export const dynamic = "force-dynamic";
+
+export default async function PricingPage() {
+  const products = await getCatalog();
   return (
     <div className="wrap section">
       <h1>Prices</h1>

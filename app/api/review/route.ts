@@ -38,6 +38,6 @@ export async function POST(request: Request) {
     at: new Date().toISOString(),
   };
   reviews.unshift(review);
-  logEvent("review", `${review.name} left ${review.stars} stars`);
+  await logEvent("review", `${review.name} left ${review.stars} stars`);
   return NextResponse.json({ ok: true, reviews });
 }
