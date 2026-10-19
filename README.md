@@ -1,5 +1,7 @@
 # Cove: an autonomous AI storefront
 
+**Sponsored by CREIGNIFICENT LLC**
+
 Cove sells small digital products and runs itself once the owner adds keys. Agents deliver orders, answer support, refund small orders, add new products, tune prices, write marketing copy, and send the owner a daily revenue report. Guardrails cap what any agent can do with money or AI spend, and one switch stops them all.
 
 With no environment variables, the whole loop runs in demo mode: checkout is simulated, storage is in memory, support answers by rule, and the product agent uses a built-in idea bank.

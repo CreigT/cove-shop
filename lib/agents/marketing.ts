@@ -1,5 +1,5 @@
 import { chat, parseJsonObject } from "../ai";
-import { store } from "../config";
+import { SPONSOR, store } from "../config";
 import { newId, type MarketingPost, type Order } from "../db";
 import { formatPrice, type Product } from "../products";
 
@@ -19,22 +19,26 @@ export async function writePost(product: Product): Promise<Omit<MarketingPost, "
       {
         role: "user",
         content: `Product: ${product.name} (${formatPrice(product)}). ${product.description}
-JSON keys: post (under 240 chars, ends with the link ${link}), emailBlurb (2-3 sentences).`,
+The shop is sponsored by CREIGNIFICENT LLC.
+JSON keys: post (under 200 chars, ends with the link ${link}), emailBlurb (2-3 sentences, last sentence is "${SPONSOR}.").`,
       },
     ],
     { maxTokens: 300, json: true }
   );
   const ai = parseJsonObject<{ post?: string; emailBlurb?: string }>(aiText);
-  const post =
-    ai?.post && ai.post.length <= 280
+  const body =
+    ai?.post && ai.post.length <= 240
       ? ai.post
       : `${product.name}: ${product.blurb} ${formatPrice(product)}, instant download. ${link}`;
+  const signed = `${body}\n${SPONSOR}`;
+  const post = signed.length <= 280 ? signed : body;
+  const blurb = ai?.emailBlurb || `${product.description} It is ${formatPrice(product)} and opens right after checkout.`;
   return {
     id: newId("post"),
     at: new Date().toISOString(),
     slug: product.slug,
     post,
-    emailBlurb: ai?.emailBlurb || `${product.description} It is ${formatPrice(product)} and opens right after checkout.`,
+    emailBlurb: blurb.includes("CREIGNIFICENT") ? blurb : `${blurb} ${SPONSOR}.`,
   };
 }
 

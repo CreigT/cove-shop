@@ -1,7 +1,7 @@
 import type { Order, RevenueReport, Ticket } from "../db";
 import { newId } from "../db";
 import { dollars } from "../products";
-import { store } from "../config";
+import { SPONSOR, store } from "../config";
 
 const DAY = 86_400_000;
 
@@ -32,7 +32,7 @@ export function buildReport(
     text: "",
   };
   report.text = [
-    `${store.name} daily report`,
+    `${store.name} daily report (${SPONSOR})`,
     `Revenue last 24h: ${dollars(report.last24hCents)} from ${report.orders24h} orders.`,
     `Revenue last 7 days: ${dollars(report.last7dCents)}.`,
     `Refunds last 7 days: ${refunds7d}. Refunds waiting for you: ${held}.`,

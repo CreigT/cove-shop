@@ -15,6 +15,8 @@ export const store = {
   secret: process.env.STORE_SECRET || "dev-only-change-me",
 };
 
+export const SPONSOR = "Sponsored by CREIGNIFICENT LLC";
+
 export function isDemoMode() {
   if (process.env.NEXT_PUBLIC_DEMO_MODE === "false") return false;
   return !process.env.STRIPE_SECRET_KEY;

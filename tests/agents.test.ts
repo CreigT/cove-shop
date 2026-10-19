@@ -37,6 +37,8 @@ describe("cron auth", () => {
     expect((await (await call("marketing", "s3cret")).json()).summary).toMatch(/Already ran today/);
     expect((await (await call("marketing", "s3cret", "?force=1")).json()).status).toBe("ok");
     expect(await recentPosts()).toHaveLength(2);
+    expect((await recentPosts())[0].post).toContain("Sponsored by CREIGNIFICENT LLC");
+    expect((await recentReports())).toHaveLength(0);
   });
 
   it("404s an unknown agent", async () => {

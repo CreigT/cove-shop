@@ -1,5 +1,5 @@
 import { logEvent } from "./events";
-import { maskEmail } from "./config";
+import { SPONSOR, maskEmail } from "./config";
 
 export type EmailResult = { sent: true; id: string } | { sent: false; reason: string };
 
@@ -21,7 +21,7 @@ export async function sendEmail(message: {
         from: process.env.EMAIL_FROM || "Cove <onboarding@resend.dev>",
         to: [message.to],
         subject: message.subject,
-        text: message.text,
+        text: `${message.text}\n\n--\n${SPONSOR}`,
       }),
     });
     const data = (await res.json()) as { id?: string; message?: string };

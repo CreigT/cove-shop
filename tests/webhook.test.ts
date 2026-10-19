@@ -91,6 +91,7 @@ describe("stripe webhook", () => {
     await POST(signedRequest(completed()));
     expect(sent).toHaveLength(1);
     expect(sent[0].to).toEqual(["buyer@example.com"]);
+    expect(sent[0].text).toContain("Sponsored by CREIGNIFICENT LLC");
     const link = sent[0].text.match(/(http\S+\/api\/download\?token=\S+)/)?.[1];
     expect(link).toBeTruthy();
     expect((await getOrder("cs_test_123"))?.emailedLink).toBe(true);

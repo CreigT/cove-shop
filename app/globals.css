@@ -109,6 +109,7 @@ input, textarea, select {
   background: #fff;
 }
 .footer { border-top: 1px solid var(--line); margin-top: 40px; color: var(--muted); font-size: 14px; }
+.sponsor { margin: 0 0 28px; text-align: center; color: var(--muted); font-size: 13px; letter-spacing: 0.04em; }
 @media (max-width: 640px) {
   .nav { align-items: flex-start; flex-direction: column; }
 }

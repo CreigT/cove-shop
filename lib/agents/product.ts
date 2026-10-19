@@ -75,7 +75,7 @@ export async function draftProduct(catalog: Product[]): Promise<{ product: Produ
       {
         role: "system",
         content:
-          "You design small digital products (checklists, templates, guides) for solo founders. Reply with one JSON object only.",
+          "You design small digital products (checklists, templates, guides) for solo founders, for a shop sponsored by CREIGNIFICENT LLC. Do not put the sponsor inside product content. Reply with one JSON object only.",
       },
       {
         role: "user",

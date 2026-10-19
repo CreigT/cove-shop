@@ -1,5 +1,5 @@
 import { listEvents } from "@/lib/events";
-import { guardrails, isDemoMode, store } from "@/lib/config";
+import { SPONSOR, guardrails, isDemoMode, store } from "@/lib/config";
 import { recentRuns } from "@/lib/db";
 import { agents } from "@/lib/agents";
 import { aiConfigured } from "@/lib/ai";
@@ -24,6 +24,7 @@ export default async function AgentsPage() {
         {store.name} is operated by agents. {store.owner} is the legal owner and
         the emergency override.
       </p>
+      <p className="badge">{SPONSOR}</p>
       <p className="notice">
         Mode: {isDemoMode() ? "demo, no live charges" : "live Stripe"}.
         {g.killSwitch ? " Kill switch is on. Scheduled agents are halted." : ""}

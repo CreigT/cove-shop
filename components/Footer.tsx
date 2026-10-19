@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { store } from "@/lib/config";
+import { SPONSOR, store } from "@/lib/config";
 
 export function Footer() {
   return (
@@ -16,6 +16,7 @@ export function Footer() {
           <a href={`mailto:${store.support}`}>{store.support}</a>
         </div>
       </div>
+      <p className="sponsor">{SPONSOR}</p>
     </footer>
   );
 }
