@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reservation Voice Agent — Local Demo</title>
+<style>body{font:18px system-ui;background:#101827;color:#f6f8fb;max-width:740px;margin:5vh auto;padding:24px}input,button{font:inherit;padding:12px;margin:7px 0;border-radius:8px}input{display:block;width:95%}button{cursor:pointer;background:#57c7bd;border:0}#result{white-space:pre-wrap;padding:18px;background:#233249;border-radius:12px}small{color:#bac6d9}</style></head>
+<body><h1>Reservation Agent</h1><p>Local demonstration — not connected to a restaurant or telephone.</p>
+<label>Guest name<input id="guest" maxlength="80" required></label>
+<label>Party size (1–8)<input id="party" type="number" min="1" max="8" value="2"></label>
+<label>Local date and time<input id="starts" type="datetime-local" step="1800"></label>
+<button id="book">Check and book</button> <button id="speak">🎤 Speak</button>
+<button id="stop">Interrupt / stop speaking</button> <button id="handoff">Request human</button>
+<p id="result" role="status" aria-live="polite">Ready.</p>
+<small>Voice recognition depends on browser support. This demo does not perform real human transfers.</small>
+<script>
+const $=id=>document.getElementById(id);
+let bookings=0,interruptions=0,handoffs=0;
+function show(s){$('result').textContent=s+'\nSession metrics: '+bookings+' bookings, '+interruptions+' interruptions, '+handoffs+' handoffs requested';}
+function say(s){if(!('speechSynthesis' in window))return; speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(s));}
+async function send(action='normal'){
+ const payload={action,guest:$('guest').value,party:Number($('party').value),starts_at:$('starts').value};
+ try{const response=await fetch('/api/agent',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+ const data=await response.json();
+ if(data.status==='confirmed')bookings++;
+ if(data.status==='interrupted')interruptions++;
+ if(data.status==='handoff_requested')handoffs++;
+ const msg=data.status==='confirmed'?'Confirmed. Booking '+data.booking_id+', table '+data.table_id:
+ data.status==='unavailable'?'No table available for that time.':
+ data.message||data.status;
+ show(msg);if(action==='normal')say(msg);
+ }catch(e){show('Connection failed. No booking confirmed.');}
+}
+$('book').onclick=()=>send();
+$('stop').onclick=()=>{if('speechSynthesis' in window)speechSynthesis.cancel();send('interrupt');};
+$('handoff').onclick=()=>send('handoff');
+$('speak').onclick=()=>{
+ const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!Recognition){show('Speech recognition unsupported in this browser. Use the form.');return;}
+ const r=new Recognition();r.lang='en-US';r.onresult=e=>{show('Heard: '+e.results[0][0].transcript+'. Please confirm the form before booking.');};r.onerror=()=>show('Microphone recognition failed. Use the form.');r.start();
+};
+</script></body></html>
