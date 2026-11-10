@@ -44,8 +44,8 @@ def book(db, guest, party, starts_at):
         row = db.execute("""SELECT t.id FROM tables t
             WHERE t.seats >= ? AND NOT EXISTS (
                 SELECT 1 FROM bookings b WHERE b.table_id=t.id
-                AND b.starts_at > datetime(?, '-90 minutes')
-                AND b.starts_at < datetime(?, '+90 minutes'))
+                AND datetime(b.starts_at) > datetime(?, '-90 minutes')
+                AND datetime(b.starts_at) < datetime(?, '+90 minutes'))
             ORDER BY t.seats, t.id LIMIT 1""", (party,starts_at,starts_at)).fetchone()
         if row is None:
             db.rollback()
